@@ -13,8 +13,8 @@ Do not name competitor or "replaced" software in any committed file (README, PLA
 - **M1 + M2 + M3 (including print-typography polish) are complete and committed on `main`.**
 - **The crate is now a single flat package** (`papyrust-cli`) at the repo root — the original four-crate workspace was flattened so we can publish one crate to crates.io.
 - The end-to-end pipeline works: `papyrust init <path>` → `papyrust validate` → `papyrust build epub|pdf|all` produces shippable EPUB 3 and print-ready PDF.
-- **Current version: `0.1.1`**, tagged on `main` (`v0.1.0` and `v0.1.1` are both real tags; nothing has been published to crates.io yet, so the first published version will be `0.1.1`).
-- **M4 prep complete; first `cargo publish` is the next manual step.** Done: versioning policy, both tags, flatten, full publish metadata (`keywords`/`categories`/`homepage`/`readme`), tarball exclusions for `CLAUDE.md` and `PLAN.md`, dry-run clean.
+- **`papyrust-cli` 0.1.1 is published on crates.io** (first publish done 2026-06-17). **Current in-repo version: `0.1.2`** — an internal-only bump (Typst preamble refactor), not yet published.
+- **M4 (Polish + distribution) is in progress.** Done: versioning policy, tags, flatten, full publish metadata, tarball exclusions, dry-run clean, and the first `cargo publish`. Remaining: binary releases (cross-compile workflow), Homebrew tap, colorized error output, README screenshots, OFL notice shipped with binary releases.
 - The README has been trimmed for the crates.io audience — no references to milestones, no link to `PLAN.md` (which is excluded from the tarball). Keep it that way; internal status belongs in this file and `PLAN.md`, not in the README.
 - 90 unit tests; CI gates are fmt + clippy `-D warnings` + tests + `epubcheck` on a sample EPUB.
 
@@ -110,8 +110,8 @@ Single source of truth: `[package].version` in the root `Cargo.toml`. `papyrust 
 When changes warrant a bump (see `PLAN.md` § Versioning for the policy):
 
 1. Edit `version` in `[package]`.
-2. Add a new dated section at the top of `CHANGELOG.md` (above any older releases). Move accumulated `## [Unreleased]` entries into it.
+2. Add a new dated section at the top of `CHANGELOG.md` (above any older releases) describing this release's changes.
 3. Commit with message `release: vX.Y.Z`.
 4. `git tag vX.Y.Z && git push --tags`.
 
-When making any user-visible change between releases, append a bullet under `## [Unreleased]` in `CHANGELOG.md` in the same commit. That way, when we bump, the changelog entry is already drafted.
+We don't keep a standing `## [Unreleased]` section — changes are released as they land, so each batch goes straight into a new dated `vX.Y.Z` section in the release commit.

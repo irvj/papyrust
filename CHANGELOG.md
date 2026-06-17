@@ -7,7 +7,14 @@ Versioning uses the cargo `0.x` convention while pre-1.0: the middle digit
 bumps for breaking changes (incompatible `book.toml` / project layout /
 CLI surface), the trailing digit bumps for everything else.
 
-## [Unreleased]
+## [0.1.2] — 2026-06-17
+
+### Changed
+- Moved the static Typst (paragraph settings, scene-break and raised-cap
+  helpers, heading show rules, running-head/page-number layout) out of the
+  Rust string builder into `src/pdf/preamble.typ` and `src/pdf/body_layout.typ`,
+  pulled in via `include_str!`. Internal refactor only — PDF output is
+  unchanged.
 
 ## [0.1.1] — 2026-06-17
 
@@ -51,6 +58,6 @@ validate it, build a valid EPUB 3 and a print-ready PDF.
 - Rust toolchain pinned at `1.95.0` via `rust-toolchain.toml` so
   rustfmt/clippy output matches between local and CI.
 
-[Unreleased]: https://github.com/irvj/papyrust/compare/v0.1.1...HEAD
+[0.1.2]: https://github.com/irvj/papyrust/releases/tag/v0.1.2
 [0.1.1]: https://github.com/irvj/papyrust/releases/tag/v0.1.1
 [0.1.0]: https://github.com/irvj/papyrust/releases/tag/v0.1.0

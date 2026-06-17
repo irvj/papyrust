@@ -1,15 +1,15 @@
 # papyrust — Plan
 
 > Living design document. Update as scope evolves.
-> Last updated: 2026-06-17 (after flatten refactor)
+> Last updated: 2026-06-17 (published 0.1.1 to crates.io; bumped to 0.1.2)
 
 ## Current state at a glance
 
 - **M1, M2, M3 complete** including M3 print-typography polish.
 - **Source layout flattened to a single crate** (`papyrust-cli`) so the publish story is one tarball, one crates.io listing, one version.
 - **End-to-end pipeline works**: `papyrust init` → `papyrust validate` → `papyrust build epub|pdf|all` produces shippable EPUB 3 and print-ready PDF.
-- **Current version `0.1.1`**, tagged on `main`. Nothing published to crates.io yet — the first published version will be `0.1.1`.
-- **M4 prep complete; first `cargo publish` is the next manual step.** Versioning policy, both tags, flatten refactor, full publish metadata, and tarball exclusions for `CLAUDE.md` and `PLAN.md` are all in place; `cargo publish --dry-run` is clean.
+- **`papyrust-cli` 0.1.1 is published on crates.io** (first publish done 2026-06-17). **Current version `0.1.2`** in-repo — an internal-only bump (Typst preamble refactor), not yet published.
+- **M4 (Polish + distribution) is in progress.** Publish prep and the first `cargo publish` are done; the remaining M4 work is binary distribution and polish (see the milestone section).
 - 90 unit tests; CI runs fmt + clippy (`-D warnings`) + tests + `epubcheck` on a sample build.
 
 What works today (matches the typography spec below unless flagged "→ note"):
@@ -224,9 +224,9 @@ Done:
 - Tarball exclusions for `CLAUDE.md` and `PLAN.md` (internal docs stay in the repo, not in the published crate) — **done**
 - README trimmed for the crates.io audience (no milestone language, no broken `PLAN.md` link in the tarball) — **done**
 - `cargo publish --dry-run` clean (38 → 36 files after exclusions, ~836 KiB compressed) — **done**
+- First `cargo publish` — **done** (`papyrust-cli` 0.1.1 live on crates.io, 2026-06-17)
 
 Next:
-- First `cargo publish` (manual; permanent)
 - Polished error messages, colorized output
 - GitHub Actions: cross-compile for macOS (arm64/x64), Linux (x64/arm64), Windows; attach binaries to releases
 - Homebrew tap
@@ -276,7 +276,7 @@ Not breaking (stays patch-level): new optional CLI flags, new `book.toml` fields
 ### Process for a bump
 
 1. Edit `version` in `[package]`.
-2. Add a new section at the top of `CHANGELOG.md` under `## [x.y.z] — YYYY-MM-DD`, moving the previous `## [Unreleased]` accumulated entries into the new dated section.
+2. Add a new section at the top of `CHANGELOG.md` under `## [x.y.z] — YYYY-MM-DD` describing this release's changes. (No standing `## [Unreleased]` section — changes are released as they land.)
 3. Commit with message `release: vX.Y.Z`.
 4. `git tag vX.Y.Z && git push --tags`.
 5. (Future) Create a GitHub Release from the tag.
