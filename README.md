@@ -27,15 +27,34 @@ cargo install --path .
 
 ## Quick start
 
+Scaffold a new book project:
+
 ```sh
 papyrust init my-novel
+```
+
+That creates `my-novel/` with a sample chapter, a front-matter dedication, an
+about-the-author stub, and a `book.toml` filled with default metadata. The
+project is buildable as-is — running the steps below produces output from the
+sample content.
+
+To turn it into your book, edit the scaffolded files:
+
+```sh
 cd my-novel
-# add your cover image as cover.jpg
-# edit book.toml, replace the sample chapter
-papyrust validate
-papyrust build epub      # outputs build/<slug>.epub
-papyrust build pdf       # outputs build/<slug>-<trim>.pdf
-papyrust build all       # both
+# add your cover image as cover.jpg in the project root
+# edit book.toml with your title, author, ISBN, and trim size
+# replace chapters/01-chapter.md with your own prose
+# add more chapters as 02-chapter.md, 03-chapter.md, ...
+```
+
+Then validate and build:
+
+```sh
+papyrust validate            # lint book.toml + chapter structure
+papyrust build epub          # outputs build/<slug>.epub
+papyrust build pdf           # outputs build/<slug>-<trim>.pdf
+papyrust build all           # both
 ```
 
 ## What you get
