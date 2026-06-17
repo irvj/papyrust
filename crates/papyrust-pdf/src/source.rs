@@ -52,7 +52,9 @@ fn write_body_layout(s: &mut String, meta: &BookMeta) {
         escape_str(&meta.title)
     );
     s.push_str("    } else {\n");
-    s.push_str("      align(right, text(size: 0.85em, tracking: 0.1em, smallcaps(chapter-title)))\n");
+    s.push_str(
+        "      align(right, text(size: 0.85em, tracking: 0.1em, smallcaps(chapter-title)))\n",
+    );
     s.push_str("    }\n");
     s.push_str("  },\n");
     // Footer: centered page number, suppressed on chapter-opening pages.
@@ -207,11 +209,7 @@ fn write_paragraph_with_cap(s: &mut String, inlines: &[Inline]) -> bool {
         return false;
     }
     let rest = &text[first_char.len_utf8()..];
-    let _ = write!(
-        s,
-        "#raise-cap(\"{}\")",
-        escape_str(&first_char.to_string())
-    );
+    let _ = write!(s, "#raise-cap(\"{}\")", escape_str(&first_char.to_string()));
     if !rest.is_empty() {
         let _ = write!(s, "#text(\"{}\")", escape_str(rest));
     }
@@ -420,9 +418,7 @@ mod tests {
         // the second is rendered as a single escaped `#text(...)`.
         book.chapters[0].blocks = vec![
             Block::Paragraph(vec![Inline::Text("First paragraph.".into())]),
-            Block::Paragraph(vec![Inline::Text(
-                r#"He said "hi" \ and # also"#.into(),
-            )]),
+            Block::Paragraph(vec![Inline::Text(r#"He said "hi" \ and # also"#.into())]),
         ];
         let src = build(&book);
         assert!(src.contains(r#"#text("He said \"hi\" \\ and # also")"#));
