@@ -16,8 +16,6 @@ pub struct BookConfig {
     pub book: BookMeta,
     pub copyright: CopyrightMeta,
     pub print: PrintMeta,
-    #[serde(default)]
-    pub ebook: EbookMeta,
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -46,9 +44,6 @@ pub struct CopyrightMeta {
 pub struct PrintMeta {
     pub trim: TrimSize,
 }
-
-#[derive(Debug, Clone, Default, Deserialize)]
-pub struct EbookMeta {}
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]
 pub enum TrimSize {

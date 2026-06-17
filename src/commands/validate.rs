@@ -1,7 +1,7 @@
 use std::path::Path;
 use std::process::ExitCode;
 
-use papyrust_core::validate::load_project;
+use crate::validate::load_project;
 
 use crate::commands::print_report;
 

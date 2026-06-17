@@ -9,6 +9,12 @@ CLI surface), the trailing digit bumps for everything else.
 
 ## [Unreleased]
 
+### Changed
+- Flattened the four-crate workspace (`papyrust`, `papyrust-core`,
+  `papyrust-epub`, `papyrust-pdf`) into a single crate at the repo
+  root for publication as `papyrust-cli` on crates.io. No user-visible
+  behavior change.
+
 ## [0.1.0] — 2026-06-17
 
 First tagged version. End-to-end pipeline works: scaffold a project,

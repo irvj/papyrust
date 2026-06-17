@@ -1,14 +1,15 @@
 # papyrust — Plan
 
 > Living design document. Update as scope evolves.
-> Last updated: 2026-06-17 (after M3 polish, before M4)
+> Last updated: 2026-06-17 (after flatten refactor)
 
 ## Current state at a glance
 
 - **M1, M2, M3 complete** including M3 print-typography polish.
+- **Source layout flattened to a single crate** (`papyrust-cli`) so the publish story is one tarball, one crates.io listing, one version.
 - **End-to-end pipeline works**: `papyrust init` → `papyrust validate` → `papyrust build epub|pdf|all` produces shippable EPUB 3 and print-ready PDF.
-- **M4 (release + distribution) deferred** while the author tests the output on real manuscripts.
-- 87 unit tests across the workspace; CI runs fmt + clippy (`-D warnings`) + tests + `epubcheck` on a sample build.
+- **M4 (release + distribution) in progress** — versioning policy and `v0.1.0` tag in place; crates.io publish next.
+- 90 unit tests; CI runs fmt + clippy (`-D warnings`) + tests + `epubcheck` on a sample build.
 
 What works today (matches the typography spec below unless flagged "→ note"):
 
@@ -35,7 +36,7 @@ Built for writers who want to own their toolchain (no subscription risk) and pre
 - One static binary, installable via `cargo install`, Homebrew, or GitHub releases
 - Zero runtime configuration for the common case — opinionated defaults
 - Outputs that upload cleanly to KDP (primary), with reasonable compatibility elsewhere
-- Idiomatic, simple, well-separated Rust that other contributors can read and extend
+- Idiomatic, simple Rust that other contributors can read and extend
 
 ## Non-goals (v1)
 
@@ -56,36 +57,51 @@ Built for writers who want to own their toolchain (no subscription risk) and pre
 | Markdown | `pulldown-cmark` 0.13 | Standard, fast, event-based |
 | Config | TOML (`serde` + `toml`) | Forgiving for non-technical writers |
 | CLI | `clap` 4 (derive macros) | De facto standard |
-| Errors | `thiserror` (libs) + `anyhow` (CLI) | Typed library errors, ergonomic CLI errors |
+| Errors | `thiserror` (modules) + `anyhow` (CLI) | Typed module errors, ergonomic CLI errors |
 | Fonts | EB Garamond variable (Regular + Italic) bundled in binary (OFL) | Single-binary promise |
 
 ### Risks on tech choices
 
 1. **Typst-as-library** — embedded API is less polished than the CLI. So far it has worked cleanly for our use case at 0.14.2. Fallback if it bites later: bundle the `typst` binary via `include_bytes!` + temp extraction.
 2. **EPUB validators are picky** — `epubcheck` is wired into CI against a sample build, run via Java in a separate workflow job.
-3. **Font licensing** — EB Garamond is OFL; the license is shipped at `crates/papyrust-pdf/fonts/OFL.txt`.
+3. **Font licensing** — EB Garamond is OFL; the license is shipped at `fonts/OFL.txt`.
 
 ## Architecture
 
-Strict separation of concerns. Each crate has one job and depends only on what it must.
+Single crate, modular structure. Module boundaries are a convention now, not a compiler-enforced rule.
 
 ```
-crates/
-├── papyrust          # binary crate; clap entry; argv → commands → calls into core/epub/pdf
-├── papyrust-core     # Book IR, MD parsing, validation, book.toml schema
-├── papyrust-epub     # Book IR → .epub (XHTML, OPF, nav, archive)
-└── papyrust-pdf      # Book IR → .pdf (via Typst): source generator + World
-
-crates/papyrust-epub/src/theme.css          # embedded EPUB CSS
-crates/papyrust-pdf/fonts/                  # bundled EB Garamond + OFL.txt
+papyrust/
+├── Cargo.toml
+├── src/
+│   ├── main.rs              # clap entry; dispatches to commands
+│   ├── commands/            # thin CLI wrappers: init, validate, build, shared helpers
+│   ├── config.rs            # book.toml schema + parser
+│   ├── ir.rs                # Book intermediate representation
+│   ├── parse.rs             # Markdown → IR via pulldown-cmark
+│   ├── project.rs           # on-disk layout discovery
+│   ├── validate.rs          # project loader + Report
+│   ├── epub/                # EPUB renderer (Book IR → .epub)
+│   │   ├── mod.rs           # public render() + EpubError
+│   │   ├── archive.rs       # ZIP packaging
+│   │   ├── escape.rs        # XML escape
+│   │   ├── nav.rs           # nav.xhtml (TOC)
+│   │   ├── opf.rs           # content.opf package document
+│   │   ├── pages.rs         # auto title/copyright/cover pages + doc boilerplate
+│   │   ├── paths.rs         # archive filenames
+│   │   ├── xhtml.rs         # Block/Inline → XHTML fragments
+│   │   └── theme.css        # embedded CSS
+│   └── pdf/                 # PDF renderer (Book IR → .pdf via Typst)
+│       ├── mod.rs           # public render() + PdfError
+│       ├── source.rs        # Book IR → Typst source string
+│       └── world.rs         # typst::World implementation
+└── fonts/                   # bundled EB Garamond + OFL.txt
 ```
 
-There is no separate top-level `assets/` directory; each renderer carries its own static resources inside its crate so the crate is self-contained.
-
-**Dependency rules:**
-- `papyrust-core` depends on no other workspace crate.
-- `papyrust-epub` and `papyrust-pdf` depend on `papyrust-core`. They do not know about each other.
-- `papyrust` (the binary crate) depends on all three and contains no business logic — only argument parsing, IO orchestration, and user-facing error reporting.
+**Module conventions** (not compiler-enforced; depend on review):
+- `epub` and `pdf` both consume `crate::ir`, `crate::config`, `crate::validate`, etc. They should never depend on each other.
+- `commands` is a thin shell: argument parsing, IO orchestration, error formatting. No business logic.
+- The "core" layer (`config`, `ir`, `parse`, `project`, `validate`) knows nothing about rendering.
 
 ### Rendering pipeline
 
@@ -147,12 +163,9 @@ publisher = "Self-Published"
 
 [print]
 trim = "6x9"                      # "5x8" | "5.5x8.5" | "6x9"
-
-[ebook]
-# reserved for future options
 ```
 
-Unknown keys are silently ignored (forward-compat). Adding warnings on unknowns is a future polish item.
+Unknown keys are silently ignored (forward-compat). The annotated reference is at `examples/book.toml`.
 
 ## CLI
 
@@ -191,7 +204,7 @@ Global `--path <dir>` overrides the project root for `validate` and `build`. `in
 ## Milestones
 
 ### M1 — Skeleton + IR — **done**
-Cargo workspace, four crates, `clap` CLI, `book.toml` parser, directory walker, MD → Book IR via pulldown-cmark, `papyrust validate` and `papyrust init`, CI gates.
+Cargo project, `clap` CLI, `book.toml` parser, directory walker, MD → Book IR via pulldown-cmark, `papyrust validate` and `papyrust init`, CI gates. Initially scaffolded as a four-crate workspace; flattened to a single crate before publish.
 
 ### M2 — EPUB — **done**
 XHTML renderer, auto cover/title/copyright/TOC pages, `nav.xhtml`, `content.opf` with DC metadata + UUID v5 identifier + `dcterms:modified`, ZIP packaging with `mimetype` stored-and-first, embedded opinionated CSS theme, `papyrust build epub` produces valid EPUB 3, `epubcheck` job in CI.
@@ -199,14 +212,16 @@ XHTML renderer, auto cover/title/copyright/TOC pages, `nav.xhtml`, `content.opf`
 ### M3 — Print PDF via Typst — **done**
 EB Garamond bundled, `typst::World` implementation, Book IR → Typst source generator, `papyrust build pdf`, build-all wiring, chapters start on recto, page numbering (roman/arabic) with chapter-opening suppression, running heads, raised cap, three-asterisk scene break.
 
-### M4 — Polish + distribution — **deferred**
-Awaiting user testing of M3 output on real manuscripts before opening this milestone. Scope when we get to it:
+### M4 — Polish + distribution — **in progress**
+- Versioning policy + `v0.1.0` tag — **done**
+- Crate name decision (`papyrust-cli` on crates.io) — **done**
+- Flatten workspace into single crate — **done**
+- Crates.io publish (account + token + `cargo publish`) — next
 - Polished error messages, colorized output
 - GitHub Actions: cross-compile for macOS (arm64/x64), Linux (x64/arm64), Windows; attach binaries to releases
-- Publish to crates.io as `papyrust-cli` (see "Crates.io naming" below)
 - Homebrew tap
 - README screenshots from a sample book
-- **Ship the OFL notice with binary releases** — either bundle `OFL.txt` alongside the binary in the release tarball, or embed it via `include_str!` and expose it via a `papyrust licenses` subcommand. The source distribution already ships the file at `crates/papyrust-pdf/fonts/OFL.txt`; binary releases need their own copy so the notice stays "easily viewable by the user" per OFL §2.
+- **Ship the OFL notice with binary releases** — either bundle `OFL.txt` alongside the binary in the release tarball, or embed it via `include_str!` and expose it via a `papyrust licenses` subcommand. The source distribution already ships the file at `fonts/OFL.txt`; binary releases need their own copy so the notice stays "easily viewable by the user" per OFL §2.
 
 #### Crates.io naming (locked)
 
@@ -214,12 +229,8 @@ The crate name `papyrust` is already taken on crates.io by an unrelated dormant 
 
 - **Crate name on crates.io:** `papyrust-cli`
 - **Install command:** `cargo install papyrust-cli`
-- **Binary name on disk:** `papyrust` (unchanged)
+- **Binary name on disk:** `papyrust` (the `[[bin]] name` field in `Cargo.toml`)
 - **Repository, README, Homebrew formula, GitHub Releases:** all still `papyrust`
-
-**We do not publish the library crates** (`papyrust-core`, `papyrust-epub`, `papyrust-pdf`) — they're workspace-internal implementation. Publishing them would create an implicit library API commitment we don't want yet. Mark each with `publish = false` in its `Cargo.toml` before the first `cargo publish` of the CLI crate, so accidental publishing is blocked.
-
-When publishing `papyrust-cli`, Cargo bundles the workspace `path` dependencies into the source tarball automatically; users `cargo install papyrust-cli` and the build works without those sub-crates being on crates.io.
 
 ## Known gaps from spec (revisit during M4 or v2)
 
@@ -242,7 +253,7 @@ When publishing `papyrust-cli`, Cargo bundles the workspace `path` dependencies 
 
 ## Versioning
 
-`[workspace.package].version` in the root `Cargo.toml` is the single source of truth — all four crates inherit it. `papyrust --version` reads it via `CARGO_PKG_VERSION` at compile time.
+`[package].version` in the root `Cargo.toml` is the single source of truth. `papyrust --version` reads it via `CARGO_PKG_VERSION` at compile time.
 
 While pre-1.0 we follow Cargo's `0.x` convention:
 
@@ -254,20 +265,20 @@ Not breaking (stays patch-level): new optional CLI flags, new `book.toml` fields
 
 ### Process for a bump
 
-1. Edit `version` in `[workspace.package]` (also update any inter-crate `version = "..."` references in `[workspace.dependencies]` if we add publish-version pins later).
-2. Add a new section at the top of `CHANGELOG.md` under `## [x.y.z] — YYYY-MM-DD`, leaving the previous `## [Unreleased]` heading in place but moving its accumulated entries down into the new dated section.
+1. Edit `version` in `[package]`.
+2. Add a new section at the top of `CHANGELOG.md` under `## [x.y.z] — YYYY-MM-DD`, moving the previous `## [Unreleased]` accumulated entries into the new dated section.
 3. Commit with message `release: vX.Y.Z`.
 4. `git tag vX.Y.Z && git push --tags`.
-5. (M4+) Create a GitHub Release from the tag.
+5. (Future) Create a GitHub Release from the tag.
 
 ## Quality bar
 
 Hard rules (CI-enforced where possible):
 
-- `#![deny(unsafe_code)]` on every crate unless a specific reason is documented at the attribute
-- `cargo fmt --check` and `cargo clippy -- -D warnings` with workspace lints enabling `clippy::pedantic` (explicit allows only at well-justified sites, never blanket)
-- Typed errors (`thiserror`) in library crates; no stringly-typed errors
-- No `unwrap()` / `expect()` in library code except in tests or with a justifying comment
+- `#![deny(unsafe_code)]` at the crate root unless a specific reason is documented at the attribute
+- `cargo fmt --check` and `cargo clippy -- -D warnings` with `clippy::pedantic` (explicit allows only at well-justified sites, never blanket)
+- Typed errors (`thiserror`) in module-level error enums (`EpubError`, `PdfError`); no stringly-typed errors
+- No `unwrap()` / `expect()` in non-test code except with a justifying comment
 - Validate at boundaries (file IO, `book.toml`, MD input). Trust internal data after that.
 - No premature abstraction. Three similar lines is fine. Generic helpers earn their existence by being needed twice.
 
@@ -275,4 +286,4 @@ Hard rules (CI-enforced where possible):
 
 - Should `papyrust init` accept a `--minimal` flag for a single empty chapter vs. the richer sample? *(Defer until a real user asks.)*
 - Should `validate` have a `--fix` mode for trivial issues (missing prefixes, etc.)? *(Defer.)*
-- For M4, should the GitHub Release flow build binaries for all four targets, or start with macOS-arm64 + Linux-x86_64 and add the rest after first user feedback? *(Decide when starting M4.)*
+- For M4, should the GitHub Release flow build binaries for all four targets, or start with macOS-arm64 + Linux-x86_64 and add the rest after first user feedback? *(Decide when starting the Release flow.)*

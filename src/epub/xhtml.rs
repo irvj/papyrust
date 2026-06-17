@@ -4,9 +4,9 @@
 //! it in the `<html>` / `<body>` boilerplate appropriate for the page
 //! kind (chapter, matter page, auto-generated page).
 
-use papyrust_core::ir::{Block, HeadingLevel, Inline, ListItem};
+use crate::ir::{Block, HeadingLevel, Inline, ListItem};
 
-use crate::escape;
+use super::escape;
 
 /// Centered ornament rendered for `Block::SceneBreak`. Three asterisks
 /// is the trade-press fiction convention and renders reliably in any

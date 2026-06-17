@@ -1519,46 +1519,21 @@ dependencies = [
 ]
 
 [[package]]
-name = "papyrust"
+name = "papyrust-cli"
 version = "0.1.0"
 dependencies = [
  "anyhow",
  "clap",
- "papyrust-core",
- "papyrust-epub",
- "papyrust-pdf",
-]
-
-[[package]]
-name = "papyrust-core"
-version = "0.1.0"
-dependencies = [
  "pulldown-cmark",
  "serde",
  "tempfile",
  "thiserror",
- "toml",
-]
-
-[[package]]
-name = "papyrust-epub"
-version = "0.1.0"
-dependencies = [
- "papyrust-core",
- "thiserror",
  "time",
- "uuid",
- "zip",
-]
-
-[[package]]
-name = "papyrust-pdf"
-version = "0.1.0"
-dependencies = [
- "papyrust-core",
- "thiserror",
+ "toml",
  "typst",
  "typst-pdf",
+ "uuid",
+ "zip",
 ]
 
 [[package]]

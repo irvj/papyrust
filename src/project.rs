@@ -14,7 +14,6 @@ use std::path::{Path, PathBuf};
 
 #[derive(Debug, Clone)]
 pub struct ProjectLayout {
-    pub root: PathBuf,
     /// Expected path of `book.toml`. May or may not exist on disk —
     /// existence is checked when the config is loaded.
     pub book_toml: PathBuf,
@@ -52,7 +51,6 @@ impl ProjectLayout {
         let back_matter = list_markdown(&root.join("back-matter"))?;
 
         Ok(Self {
-            root: root.to_path_buf(),
             book_toml,
             cover,
             front_matter,

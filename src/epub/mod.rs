@@ -1,13 +1,13 @@
 //! EPUB 3 renderer for papyrust.
 //!
-//! Consumes a [`papyrust_core::ir::Book`] and produces an EPUB 3 file.
+//! Consumes a [`crate::ir::Book`] and produces an EPUB 3 file.
 //! Output is plain zipped XHTML + a few XML metadata documents — no
 //! reader-specific extensions, no heavyweight framework.
 
 use std::fmt::Write as _;
 use std::path::Path;
 
-use papyrust_core::ir::{Book, Chapter, MatterPage};
+use crate::ir::{Book, Chapter, MatterPage};
 
 mod archive;
 mod escape;

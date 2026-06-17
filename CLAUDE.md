@@ -11,14 +11,15 @@ Do not name competitor or "replaced" software in any committed file (README, PLA
 ## Current status (read first)
 
 - **M1 + M2 + M3 (including print-typography polish) are complete and committed on `main`.**
+- **The crate is now a single flat package** (`papyrust-cli`) at the repo root — the original four-crate workspace was flattened so we can publish one crate to crates.io.
 - The end-to-end pipeline works: `papyrust init <path>` → `papyrust validate` → `papyrust build epub|pdf|all` produces shippable EPUB 3 and print-ready PDF.
-- **M4 (releases + distribution) is deferred** while the author tests the output on real manuscripts. Don't start M4 work unprompted.
-- 87 unit tests; CI gates are fmt + clippy `-D warnings` + tests + `epubcheck` on a sample EPUB.
+- **M4 (releases + distribution) is in progress** — versioning policy and `v0.1.0` tag in place; crate-name decision locked (`papyrust-cli` on crates.io, binary stays `papyrust`); flat layout ready for publishing.
+- 90 unit tests; CI gates are fmt + clippy `-D warnings` + tests + `epubcheck` on a sample EPUB.
 
 If asked to resume work, the most likely real tasks are:
 1. **Adjustments based on visual feedback** on the PDF or EPUB (typography tweaks, ornament changes, page layout).
 2. **Items from `PLAN.md` § "Known gaps from spec"** — e.g. true floating drop cap, widows/orphans in Typst, leading tweak.
-3. **M4 work** if the author signals readiness.
+3. **Continuing M4 work** — actual `cargo publish`, GitHub Releases workflow, Homebrew tap.
 
 Confirm scope before starting any of these.
 
@@ -33,13 +34,10 @@ Confirm scope before starting any of these.
 These apply to every line of code in this repo:
 
 1. **Simplicity over cleverness.** Prefer the obvious approach. No premature abstraction. Three similar lines beats a generic helper that earns its keep only once.
-2. **Strict separation of concerns:**
-   - `papyrust-core` knows nothing about EPUB or PDF.
-   - `papyrust-epub` and `papyrust-pdf` depend on `papyrust-core` but never on each other.
-   - `papyrust` (the binary crate at `crates/papyrust`) is a thin shell: argument parsing, IO orchestration, error formatting. No business logic.
-3. **Safety:** `#![deny(unsafe_code)]` on every crate unless a documented reason exists.
-4. **Typed errors:** `thiserror` in library crates, `anyhow` in the CLI. No `String` errors.
-5. **No `unwrap()`/`expect()` in library code** except in tests or with a justifying comment.
+2. **Cohesive modules.** The `epub` and `pdf` modules consume `crate::ir`, `crate::config`, etc. but should never depend on each other. The `commands` module is a thin shell over those: argument parsing, IO orchestration, error formatting. Treat module boundaries with care even though the compiler no longer enforces them at the crate level.
+3. **Safety:** `#![deny(unsafe_code)]` at the crate root unless a documented reason exists.
+4. **Typed errors:** `thiserror` for module-level error enums (`EpubError`, `PdfError`, etc.); `anyhow` at the CLI surface. No stringly-typed errors.
+5. **No `unwrap()`/`expect()` in non-test code** except with a justifying comment.
 6. **Validate at boundaries** (file IO, `book.toml`, Markdown). Trust internal data after that.
 7. **CI gates:** `cargo fmt --check`, `cargo clippy -- -D warnings`, `cargo test` must pass.
 
@@ -67,16 +65,19 @@ These are locked. Don't re-propose alternatives unless the user opens the questi
 - No print cover generation in v1
 - Binary name: `papyrust`
 - **Crates.io name: `papyrust-cli`** (the bare `papyrust` is taken by an unrelated dormant 2022 script runner; the binary is still installed as `papyrust`)
-- Only the CLI crate is published to crates.io; `papyrust-core`, `papyrust-epub`, `papyrust-pdf` are workspace-internal and should be marked `publish = false` before first publish
+- **Single-crate layout.** The original four-crate workspace (`papyrust`, `papyrust-core`, `papyrust-epub`, `papyrust-pdf`) was flattened into one crate at the repo root before first publish. Don't re-suggest a workspace.
 
 ## Where things live (orientation)
 
-- `crates/papyrust-core/src/` — config, ir, parse, project, validate
-- `crates/papyrust-epub/src/` — archive, escape, nav, opf, pages, paths, xhtml, `theme.css` (embedded via `include_str!`)
-- `crates/papyrust-pdf/src/` — `world.rs` (typst::World impl), `source.rs` (Book IR → Typst source generator)
-- `crates/papyrust-pdf/fonts/` — EB Garamond variable TTFs + OFL.txt
-- `crates/papyrust/src/main.rs` + `commands/{init,validate,build}.rs`
+- `src/main.rs` — CLI entry, clap setup, dispatch
+- `src/commands/` — `init.rs`, `validate.rs`, `build.rs`, `mod.rs` (shared helpers)
+- `src/config.rs`, `src/ir.rs`, `src/parse.rs`, `src/project.rs`, `src/validate.rs` — core types + loaders (the former `papyrust-core`)
+- `src/epub/` — EPUB renderer: `mod.rs` (public `render` + `EpubError`), `archive`, `escape`, `nav`, `opf`, `pages`, `paths`, `xhtml`, `theme.css`
+- `src/pdf/` — PDF renderer: `mod.rs` (public `render` + `PdfError`), `world.rs` (typst::World impl), `source.rs` (Book IR → Typst source generator)
+- `fonts/` — EB Garamond variable TTFs + `OFL.txt`
+- `examples/book.toml` — annotated reference for the `book.toml` schema
 - `.github/workflows/ci.yml` — fmt + clippy + test job, plus a separate `epubcheck` job
+- `rust-toolchain.toml` — pins to 1.95.0 to match CI
 
 ## Things the user cares about
 
@@ -91,21 +92,22 @@ These are locked. Don't re-propose alternatives unless the user opens the questi
 - Suggesting heavy frameworks "just in case"
 - Adding configuration knobs for hypothetical future users
 - Drive-by refactors that aren't part of the current task
+- Re-proposing the four-crate workspace structure — we deliberately flattened it
 - Starting M4 work without explicit confirmation
 
 ## Commit conventions
 
 - Terse, lowercase commit messages (e.g., `m3 polish: recto starts, page numbers, running heads, raised cap`).
 - No `Co-Authored-By: Claude ...` trailer.
-- Stage specific paths (not `-A`/`.`), but using a small set of top-level dirs (e.g., `git add crates .github README.md`) is fine.
+- Stage specific paths (not `-A`/`.`), but using a small set of top-level dirs (e.g., `git add src .github README.md`) is fine.
 
 ## Versioning
 
-Single source of truth: `[workspace.package].version` in the root `Cargo.toml`. All four crates inherit it. `papyrust --version` displays it automatically via `CARGO_PKG_VERSION`.
+Single source of truth: `[package].version` in the root `Cargo.toml`. `papyrust --version` displays it automatically via `CARGO_PKG_VERSION`.
 
 When changes warrant a bump (see `PLAN.md` § Versioning for the policy):
 
-1. Edit `version` in `[workspace.package]`.
+1. Edit `version` in `[package]`.
 2. Add a new dated section at the top of `CHANGELOG.md` (above any older releases). Move accumulated `## [Unreleased]` entries into it.
 3. Commit with message `release: vX.Y.Z`.
 4. `git tag vX.Y.Z && git push --tags`.

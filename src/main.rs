@@ -4,6 +4,13 @@ use std::process::ExitCode;
 use clap::{Parser, Subcommand};
 
 mod commands;
+mod config;
+mod epub;
+mod ir;
+mod parse;
+mod pdf;
+mod project;
+mod validate;
 
 #[derive(Parser, Debug)]
 #[command(

@@ -13,7 +13,7 @@ use std::io::{Seek, Write};
 use zip::CompressionMethod;
 use zip::write::{SimpleFileOptions, ZipWriter};
 
-use crate::{EpubError, paths};
+use super::{EpubError, paths};
 
 const MIMETYPE: &[u8] = b"application/epub+zip";
 

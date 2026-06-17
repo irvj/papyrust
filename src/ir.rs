@@ -64,6 +64,9 @@ pub struct MatterPage {
     pub blocks: Vec<Block>,
 }
 
+// `BlockQuote` reads more clearly than `Quote` here (it's the HTML
+// <blockquote> element, not a generic quotation), so we keep the prefix.
+#[allow(clippy::enum_variant_names)]
 #[derive(Debug, Clone)]
 pub enum Block {
     Paragraph(Vec<Inline>),

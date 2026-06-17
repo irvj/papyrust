@@ -13,8 +13,8 @@ use typst::text::{Font, FontBook};
 use typst::utils::LazyHash;
 use typst::{Library, LibraryExt, World};
 
-const FONT_REGULAR: &[u8] = include_bytes!("../fonts/EBGaramond-Variable.ttf");
-const FONT_ITALIC: &[u8] = include_bytes!("../fonts/EBGaramond-Italic-Variable.ttf");
+const FONT_REGULAR: &[u8] = include_bytes!("../../fonts/EBGaramond-Variable.ttf");
+const FONT_ITALIC: &[u8] = include_bytes!("../../fonts/EBGaramond-Italic-Variable.ttf");
 
 static SHARED_LIBRARY: OnceLock<LazyHash<Library>> = OnceLock::new();
 static SHARED_FONTS: OnceLock<(LazyHash<FontBook>, Vec<Font>)> = OnceLock::new();

@@ -2,7 +2,7 @@ pub mod build;
 pub mod init;
 pub mod validate;
 
-use papyrust_core::validate::{Report, Severity};
+use crate::validate::{Report, Severity};
 
 /// Print each issue in a report to stderr in a uniform format.
 /// Returns the (errors, warnings) counts for caller-side summaries.

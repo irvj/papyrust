@@ -7,9 +7,9 @@
 
 use std::fmt::Write as _;
 
-use papyrust_core::ir::BookMeta;
+use crate::ir::BookMeta;
 
-use crate::escape;
+use super::escape;
 
 /// Wrap a body fragment in the full EPUB 3 XHTML document boilerplate.
 pub fn document(title: &str, epub_type: Option<&str>, body: &str, lang: &str) -> String {
@@ -85,8 +85,8 @@ pub fn copyright_page(meta: &BookMeta) -> String {
 mod tests {
     use super::*;
 
-    use papyrust_core::config::TrimSize;
-    use papyrust_core::ir::Copyright;
+    use crate::config::TrimSize;
+    use crate::ir::Copyright;
 
     fn meta() -> BookMeta {
         BookMeta {

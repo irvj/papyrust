@@ -5,13 +5,13 @@
 
 use std::fmt::Write as _;
 
-use papyrust_core::ir::{Book, BookMeta};
+use crate::ir::{Book, BookMeta};
 use time::OffsetDateTime;
 use time::format_description::FormatItem;
 use time::macros::format_description;
 use uuid::Uuid;
 
-use crate::{EpubError, escape, paths};
+use super::{EpubError, escape, paths};
 
 const DCTERMS_FMT: &[FormatItem<'_>] =
     format_description!("[year]-[month]-[day]T[hour]:[minute]:[second]Z");
@@ -174,8 +174,8 @@ fn book_identifier(meta: &BookMeta) -> String {
 mod tests {
     use super::*;
 
-    use papyrust_core::config::TrimSize;
-    use papyrust_core::ir::{Chapter, Copyright, Cover, MatterPage};
+    use crate::config::TrimSize;
+    use crate::ir::{Chapter, Copyright, Cover, MatterPage};
 
     fn book(with_cover: bool, isbn: Option<&str>) -> Book {
         Book {

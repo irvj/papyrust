@@ -6,9 +6,9 @@
 
 use std::fmt::Write as _;
 
-use papyrust_core::ir::Book;
+use crate::ir::Book;
 
-use crate::{escape, pages, paths};
+use super::{escape, pages, paths};
 
 #[must_use]
 pub fn build(book: &Book) -> String {
@@ -51,8 +51,8 @@ pub fn build(book: &Book) -> String {
 mod tests {
     use super::*;
 
-    use papyrust_core::config::TrimSize;
-    use papyrust_core::ir::{Book, BookMeta, Chapter, Copyright, MatterPage};
+    use crate::config::TrimSize;
+    use crate::ir::{Book, BookMeta, Chapter, Copyright, MatterPage};
 
     fn book_with(chapters: Vec<&str>, front: Vec<Option<&str>>, back: Vec<Option<&str>>) -> Book {
         Book {

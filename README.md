@@ -17,10 +17,10 @@ trade-press typography, single static binary, no runtime dependencies.
 ```sh
 git clone https://github.com/irvj/papyrust
 cd papyrust
-cargo install --path crates/papyrust
+cargo install --path .
 ```
 
-Once published, `cargo install papyrust` will be the standard install path.
+Once published, `cargo install papyrust-cli` will be the standard install path.
 
 ## Quick start
 
@@ -69,4 +69,4 @@ shorter scaffolded version into your new project.
 ## License
 
 MIT. See [`LICENSE`](./LICENSE). The bundled EB Garamond font is OFL;
-its license is at `crates/papyrust-pdf/fonts/OFL.txt`.
+its license is at [`fonts/OFL.txt`](./fonts/OFL.txt).

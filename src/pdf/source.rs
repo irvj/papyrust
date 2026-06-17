@@ -7,9 +7,7 @@
 
 use std::fmt::Write as _;
 
-use papyrust_core::ir::{
-    Block, Book, BookMeta, Chapter, HeadingLevel, Inline, ListItem, MatterPage,
-};
+use crate::ir::{Block, Book, BookMeta, Chapter, HeadingLevel, Inline, ListItem, MatterPage};
 
 pub fn build(book: &Book) -> String {
     let mut s = String::new();
@@ -337,8 +335,8 @@ fn escape_str(s: &str) -> String {
 mod tests {
     use super::*;
 
-    use papyrust_core::config::TrimSize;
-    use papyrust_core::ir::{Chapter, Copyright};
+    use crate::config::TrimSize;
+    use crate::ir::{Chapter, Copyright};
 
     fn meta() -> BookMeta {
         BookMeta {

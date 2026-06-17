@@ -1,10 +1,10 @@
 //! Print PDF renderer for papyrust (via embedded Typst).
 //!
-//! Consumes a [`papyrust_core::ir::Book`] and produces a print-ready PDF.
+//! Consumes a [`crate::ir::Book`] and produces a print-ready PDF.
 
 use std::path::Path;
 
-use papyrust_core::ir::Book;
+use crate::ir::Book;
 use typst::diag::SourceDiagnostic;
 use typst::layout::PagedDocument;
 

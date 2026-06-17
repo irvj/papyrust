@@ -1,55 +1,46 @@
-[workspace]
-resolver = "3"
-members = [
-    "crates/papyrust",
-    "crates/papyrust-core",
-    "crates/papyrust-epub",
-    "crates/papyrust-pdf",
-]
-
-[workspace.package]
+[package]
+name = "papyrust-cli"
+description = "Build publication-quality EPUB and print-ready PDF from a folder of Markdown."
 version = "0.1.0"
 edition = "2024"
 authors = ["Joseph Irvin"]
 license = "MIT"
 repository = "https://github.com/irvj/papyrust"
+homepage = "https://github.com/irvj/papyrust"
+readme = "README.md"
+keywords = ["epub", "pdf", "markdown", "publishing", "typst"]
+categories = ["command-line-utilities", "text-processing"]
 rust-version = "1.85"
 
-[workspace.lints.rust]
+[[bin]]
+name = "papyrust"
+path = "src/main.rs"
+
+[lints.rust]
 unsafe_code = "deny"
 missing_debug_implementations = "warn"
 rust_2024_compatibility = { level = "warn", priority = -1 }
 
-[workspace.lints.clippy]
+[lints.clippy]
 all = { level = "warn", priority = -1 }
 pedantic = { level = "warn", priority = -1 }
-# Common pedantic noise that doesn't pay its way:
 module_name_repetitions = "allow"
 missing_errors_doc = "allow"
 missing_panics_doc = "allow"
 must_use_candidate = "allow"
 
-[workspace.dependencies]
-# CLI / errors
+[dependencies]
 anyhow = "1"
 thiserror = "2"
 clap = { version = "4", features = ["derive"] }
-
-# Config + parsing
 serde = { version = "1", features = ["derive"] }
 toml = "0.8"
 pulldown-cmark = "0.13"
-
-# Archive + identifiers (EPUB)
 zip = { version = "2", default-features = false, features = ["deflate"] }
 uuid = { version = "1", features = ["v5"] }
 time = { version = "0.3", features = ["formatting", "macros"] }
-
-# Typesetting (print PDF)
 typst = "0.14"
 typst-pdf = "0.14"
 
-# Workspace crates
-papyrust-core = { path = "crates/papyrust-core", version = "0.1.0" }
-papyrust-epub = { path = "crates/papyrust-epub", version = "0.1.0" }
-papyrust-pdf = { path = "crates/papyrust-pdf", version = "0.1.0" }
+[dev-dependencies]
+tempfile = "3"
