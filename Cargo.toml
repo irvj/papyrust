@@ -11,6 +11,8 @@ readme = "README.md"
 keywords = ["epub", "pdf", "markdown", "publishing", "typst"]
 categories = ["command-line-utilities", "text-processing"]
 rust-version = "1.85"
+# Files kept in-repo but excluded from the published tarball.
+exclude = ["CLAUDE.md", "PLAN.md"]
 
 [[bin]]
 name = "papyrust"
