@@ -9,11 +9,13 @@ CLI surface), the trailing digit bumps for everything else.
 
 ## [Unreleased]
 
+## [0.1.1] — 2026-06-17
+
 ### Changed
 - Flattened the four-crate workspace (`papyrust`, `papyrust-core`,
   `papyrust-epub`, `papyrust-pdf`) into a single crate at the repo
   root for publication as `papyrust-cli` on crates.io. No user-visible
-  behavior change.
+  behavior change — output is byte-identical to v0.1.0.
 
 ## [0.1.0] — 2026-06-17
 
@@ -49,5 +51,6 @@ validate it, build a valid EPUB 3 and a print-ready PDF.
 - Rust toolchain pinned at `1.95.0` via `rust-toolchain.toml` so
   rustfmt/clippy output matches between local and CI.
 
-[Unreleased]: https://github.com/irvj/papyrust/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/irvj/papyrust/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/irvj/papyrust/releases/tag/v0.1.1
 [0.1.0]: https://github.com/irvj/papyrust/releases/tag/v0.1.0
