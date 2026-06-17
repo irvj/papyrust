@@ -1,0 +1,59 @@
+# Example book.toml — copy this to the root of your project and edit it.
+#
+# This is a fully annotated reference for the `book.toml` schema.
+# `papyrust init <path>` produces a shorter scaffolded version of the same
+# thing; this file shows every supported field with notes.
+
+# ─── [book] ──────────────────────────────────────────────────────────────
+#
+# Top-line metadata about the book itself. `title` and `author` are
+# required; everything else has a default or is optional.
+
+[book]
+title = "The Long Road Home"
+
+# Optional. Shown on the title page below the title (italicised).
+subtitle = "A Novel"
+
+author = "Jane Doe"
+
+# BCP 47 language tag (e.g. "en", "en-US", "fr-FR", "de-DE").
+# The EPUB stores the full tag; the PDF strips the region subtag because
+# Typst expects bare ISO 639 codes.
+language = "en-US"
+
+
+# ─── [copyright] ─────────────────────────────────────────────────────────
+#
+# Used on the auto-generated copyright page (PDF), the OPF metadata
+# (EPUB), and as the rights statement.
+
+[copyright]
+year = 2026
+holder = "Jane Doe"
+
+# Optional. If set, the EPUB's <dc:identifier> uses urn:isbn:<value>;
+# otherwise a deterministic UUID v5 derived from title+author+year is used.
+# isbn_epub = "978-0-000-00000-0"
+
+# Optional. Shown on the print copyright page if set.
+# isbn_print = "978-0-000-00000-1"
+
+publisher = "Self-Published"
+
+
+# ─── [print] ─────────────────────────────────────────────────────────────
+#
+# Print PDF settings. Only `trim` is currently configurable.
+
+[print]
+# One of: "5x8", "5.5x8.5", "6x9". All three are common KDP perfect-bind
+# sizes. Output filename includes the trim: <slug>-6x9.pdf
+trim = "6x9"
+
+
+# ─── [ebook] ─────────────────────────────────────────────────────────────
+#
+# Reserved for future EPUB-only options. Safe to omit.
+
+[ebook]

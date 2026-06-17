@@ -61,6 +61,10 @@ contents are auto-generated from `book.toml`. Custom pages you drop into
 
 Chapter titles come from the first `# Heading` in each chapter file.
 
+A fully annotated `book.toml` reference lives at
+[`examples/book.toml`](./examples/book.toml). `papyrust init` writes a
+shorter scaffolded version into your new project.
+
 ## License
 
 MIT. See [`LICENSE`](./LICENSE). The bundled EB Garamond font is OFL;
