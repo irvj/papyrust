@@ -17,6 +17,7 @@ anyhow = { workspace = true }
 clap = { workspace = true }
 papyrust-core = { workspace = true }
 papyrust-epub = { workspace = true }
+papyrust-pdf = { workspace = true }
 
 [lints]
 workspace = true

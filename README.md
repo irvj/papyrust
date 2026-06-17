@@ -6,8 +6,9 @@ A CLI tool for writers who want to own their toolchain. Opinionated
 trade-press typography, single static binary, no runtime dependencies.
 
 > **Status:** under active development. M1 (project scaffolding,
-> validation) and M2 (EPUB rendering) are complete. Print PDF (M3) is
-> next. See [`PLAN.md`](./PLAN.md) for the roadmap.
+> validation), M2 (EPUB rendering), and M3 (print PDF) are complete.
+> M4 (release polish + distribution) is next. See [`PLAN.md`](./PLAN.md)
+> for the roadmap.
 
 ## Install (from source)
 
@@ -28,7 +29,8 @@ cd my-novel
 # edit book.toml, replace the sample chapter
 papyrust validate
 papyrust build epub      # outputs build/<slug>.epub
-papyrust build pdf       # planned for M3
+papyrust build pdf       # outputs build/<slug>-<trim>.pdf
+papyrust build all       # both
 ```
 
 ## Project layout

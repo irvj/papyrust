@@ -45,6 +45,10 @@ zip = { version = "2", default-features = false, features = ["deflate"] }
 uuid = { version = "1", features = ["v5"] }
 time = { version = "0.3", features = ["formatting", "macros"] }
 
+# Typesetting (print PDF)
+typst = "0.14"
+typst-pdf = "0.14"
+
 # Workspace crates
 papyrust-core = { path = "crates/papyrust-core", version = "0.1.0" }
 papyrust-epub = { path = "crates/papyrust-epub", version = "0.1.0" }
