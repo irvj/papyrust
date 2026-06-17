@@ -240,6 +240,26 @@ When publishing `papyrust-cli`, Cargo bundles the workspace `path` dependencies 
 - Live preview server
 - Word/chapter statistics command
 
+## Versioning
+
+`[workspace.package].version` in the root `Cargo.toml` is the single source of truth — all four crates inherit it. `papyrust --version` reads it via `CARGO_PKG_VERSION` at compile time.
+
+While pre-1.0 we follow Cargo's `0.x` convention:
+
+- **Patch (`0.1.0` → `0.1.1`)** — bug fixes, doc updates, internal refactors, non-breaking visual tweaks to EPUB or PDF output.
+- **Minor (`0.1.x` → `0.2.0`)** — meaningfully new user-facing feature, or a backwards-incompatible change (`book.toml` schema invalidates existing files, project layout requires new structure, CLI subcommand or flag removed/renamed, default output filename changes).
+- **`1.0.0`** — when the output format and CLI surface feel stable enough to commit to API compatibility going forward.
+
+Not breaking (stays patch-level): new optional CLI flags, new `book.toml` fields with defaults, visual changes within an existing format, bug fixes.
+
+### Process for a bump
+
+1. Edit `version` in `[workspace.package]` (also update any inter-crate `version = "..."` references in `[workspace.dependencies]` if we add publish-version pins later).
+2. Add a new section at the top of `CHANGELOG.md` under `## [x.y.z] — YYYY-MM-DD`, leaving the previous `## [Unreleased]` heading in place but moving its accumulated entries down into the new dated section.
+3. Commit with message `release: vX.Y.Z`.
+4. `git tag vX.Y.Z && git push --tags`.
+5. (M4+) Create a GitHub Release from the tag.
+
 ## Quality bar
 
 Hard rules (CI-enforced where possible):

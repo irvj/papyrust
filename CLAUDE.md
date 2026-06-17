@@ -98,3 +98,16 @@ These are locked. Don't re-propose alternatives unless the user opens the questi
 - Terse, lowercase commit messages (e.g., `m3 polish: recto starts, page numbers, running heads, raised cap`).
 - No `Co-Authored-By: Claude ...` trailer.
 - Stage specific paths (not `-A`/`.`), but using a small set of top-level dirs (e.g., `git add crates .github README.md`) is fine.
+
+## Versioning
+
+Single source of truth: `[workspace.package].version` in the root `Cargo.toml`. All four crates inherit it. `papyrust --version` displays it automatically via `CARGO_PKG_VERSION`.
+
+When changes warrant a bump (see `PLAN.md` § Versioning for the policy):
+
+1. Edit `version` in `[workspace.package]`.
+2. Add a new dated section at the top of `CHANGELOG.md` (above any older releases). Move accumulated `## [Unreleased]` entries into it.
+3. Commit with message `release: vX.Y.Z`.
+4. `git tag vX.Y.Z && git push --tags`.
+
+When making any user-visible change between releases, append a bullet under `## [Unreleased]` in `CHANGELOG.md` in the same commit. That way, when we bump, the changelog entry is already drafted.

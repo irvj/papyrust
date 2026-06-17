@@ -5,11 +5,12 @@ Build publication-quality EPUB and print-ready PDF from a folder of Markdown.
 A CLI tool for writers who want to own their toolchain. Opinionated
 trade-press typography, single static binary, no runtime dependencies.
 
-> **Status:** under active development. The end-to-end pipeline works
-> (`init` → `validate` → `build epub|pdf|all`) and produces shippable
-> EPUB 3 and print-ready PDF. Release distribution (M4) is paused
-> pending real-manuscript testing. See [`PLAN.md`](./PLAN.md) for the
-> roadmap and current state.
+> **Status:** under active development. Current version **0.1.0**
+> (see [`CHANGELOG.md`](./CHANGELOG.md)). The end-to-end pipeline
+> works (`init` → `validate` → `build epub|pdf|all`) and produces
+> shippable EPUB 3 and print-ready PDF. Release distribution (M4) is
+> paused pending real-manuscript testing. See [`PLAN.md`](./PLAN.md)
+> for the roadmap and current state.
 
 ## Install (from source)
 
