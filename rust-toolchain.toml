@@ -1,0 +1,7 @@
+# Pinned so CI's rustfmt/clippy match what contributors run locally.
+# Bump deliberately; update .github/workflows/ci.yml in the same commit
+# so the CI action ref stays in lockstep.
+[toolchain]
+channel = "1.95.0"
+components = ["rustfmt", "clippy"]
+profile = "minimal"

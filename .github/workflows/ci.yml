@@ -16,8 +16,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install stable toolchain
-        uses: dtolnay/rust-toolchain@stable
+      - name: Install pinned toolchain
+        # Version pinned to match rust-toolchain.toml; bump both together.
+        uses: dtolnay/rust-toolchain@1.95.0
         with:
           components: rustfmt, clippy
 
@@ -39,8 +40,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install stable toolchain
-        uses: dtolnay/rust-toolchain@stable
+      - name: Install pinned toolchain
+        # Version pinned to match rust-toolchain.toml; bump both together.
+        uses: dtolnay/rust-toolchain@1.95.0
 
       - name: Cache cargo
         uses: Swatinem/rust-cache@v2
