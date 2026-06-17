@@ -65,7 +65,8 @@ jobs:
         run: |
           mkdir -p /tmp/sample
           cargo run --release -- init /tmp/sample/book
-          printf '\xff\xd8\xff\xe0\x00\x10JFIF\x00\x01\x01\x00\x00\x01\x00\x01\x00\x00\xff\xd9' > /tmp/sample/book/cover.jpg
+          # Generate a real 1x1 JPEG so epubcheck can decode it.
+          convert -size 1x1 xc:white /tmp/sample/book/cover.jpg
           cargo run --release -- --path /tmp/sample/book build epub
 
       - name: Run epubcheck
