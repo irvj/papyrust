@@ -1,0 +1,17 @@
+# Rust
+/target
+**/*.rs.bk
+
+# Build output (papyrust's own outputs for example books)
+/build
+/examples/**/build
+
+# Editor / OS
+.DS_Store
+*.swp
+*~
+.idea/
+.vscode/
+
+# Claude
+.claude/
