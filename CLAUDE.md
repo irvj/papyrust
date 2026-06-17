@@ -6,6 +6,8 @@ Instructions for Claude Code when working in this repo. Read `PLAN.md` for the f
 
 `papyrust` — a Rust CLI that builds publication-quality EPUB and print-ready PDF from a folder of Markdown. Open source, single static binary, opinionated typography. See `PLAN.md`.
 
+Do not name competitor or "replaced" software in any committed file (README, PLAN.md, CLAUDE.md, commit messages). Describe the project on its own terms.
+
 ## Workflow
 
 - **Start every session by skimming `PLAN.md`.** Locked decisions live there; do not relitigate them without the user asking.
@@ -20,7 +22,7 @@ These apply to every line of code in this repo:
 2. **Strict separation of concerns:**
    - `papyrust-core` knows nothing about EPUB or PDF.
    - `papyrust-epub` and `papyrust-pdf` depend on `papyrust-core` but never on each other.
-   - `papyrust-cli` is a thin shell: argument parsing, IO orchestration, error formatting. No business logic.
+   - `papyrust` (the binary crate at `crates/papyrust`) is a thin shell: argument parsing, IO orchestration, error formatting. No business logic.
 3. **Safety:** `#![deny(unsafe_code)]` on every crate unless a documented reason exists.
 4. **Typed errors:** `thiserror` in library crates, `anyhow` in the CLI. No `String` errors.
 5. **No `unwrap()`/`expect()` in library code** except in tests or with a justifying comment.
@@ -48,7 +50,7 @@ These are locked. Don't re-propose alternatives unless the user opens the questi
 
 ## Things the user cares about
 
-- Output that looks like a real trade-press book (Vellum-quality bar)
+- Output that looks like a real trade-press book
 - A workflow that's fast to use from the terminal
 - Code that other contributors can read; this will be open-sourced
 - KDP as the primary upload target

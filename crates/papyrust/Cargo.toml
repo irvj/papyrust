@@ -1,0 +1,21 @@
+[package]
+name = "papyrust"
+description = "Build publication-quality EPUB and print-ready PDF from a folder of Markdown."
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+
+[[bin]]
+name = "papyrust"
+path = "src/main.rs"
+
+[dependencies]
+anyhow = { workspace = true }
+clap = { workspace = true }
+papyrust-core = { workspace = true }
+
+[lints]
+workspace = true

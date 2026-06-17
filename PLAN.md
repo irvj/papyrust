@@ -7,7 +7,7 @@
 
 `papyrust` is a Rust CLI that turns a folder of Markdown into a publication-quality EPUB and a print-ready PDF, with opinionated trade-press typography. Single static binary, no runtime dependencies.
 
-Replaces [Vellum](https://vellum.pub) for users who want to own their toolchain (no subscription rugpull risk) and prefer a CLI workflow.
+Built for writers who want to own their toolchain (no subscription risk) and prefer a CLI workflow over a GUI.
 
 ## Goals
 
@@ -51,7 +51,7 @@ Strict separation of concerns. Each crate has one job and depends only on what i
 
 ```
 crates/
-├── papyrust-cli      # clap entry; argv → commands → calls into core/epub/pdf
+├── papyrust          # binary crate; clap entry; argv → commands → calls into core/epub/pdf
 ├── papyrust-core     # Book IR, MD parsing, validation, book.toml schema
 ├── papyrust-epub     # Book IR → .epub
 └── papyrust-pdf      # Book IR → .pdf (via Typst)
@@ -67,7 +67,7 @@ examples/sample-book/      # fixture used by tests + demos
 **Dependency rules:**
 - `papyrust-core` depends on no other workspace crate.
 - `papyrust-epub` and `papyrust-pdf` depend on `papyrust-core`. They do not know about each other.
-- `papyrust-cli` depends on all three and contains no business logic — only argument parsing, IO orchestration, and user-facing error reporting.
+- `papyrust` (the binary crate) depends on all three and contains no business logic — only argument parsing, IO orchestration, and user-facing error reporting.
 
 ### Rendering pipeline
 
