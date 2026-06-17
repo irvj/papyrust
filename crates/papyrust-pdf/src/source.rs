@@ -17,10 +17,53 @@ pub fn build(book: &Book) -> String {
     write_title_page(&mut s, &book.meta);
     write_copyright_page(&mut s, &book.meta);
     write_toc(&mut s);
-    write_matter_pages(&mut s, &book.front_matter);
+
+    // Front matter (if any): roman numerals.
+    if !book.front_matter.is_empty() {
+        s.push_str("\n#set page(numbering: \"i\")\n");
+        s.push_str("#counter(page).update(1)\n");
+        write_matter_pages(&mut s, &book.front_matter);
+    }
+
+    // Body (chapters + back matter): arabic numerals from 1, running
+    // heads (book title verso, chapter title recto), all suppressed on
+    // chapter-opening pages.
+    write_body_layout(&mut s, &book.meta);
     write_chapters(&mut s, &book.chapters);
     write_matter_pages(&mut s, &book.back_matter);
     s
+}
+
+fn write_body_layout(s: &mut String, meta: &BookMeta) {
+    s.push_str("\n#set page(\n");
+    s.push_str("  numbering: \"1\",\n");
+    // Running head: book title verso, chapter title recto.
+    s.push_str("  header: context {\n");
+    s.push_str("    let page-num = counter(page).get().first()\n");
+    s.push_str("    let chapter-here = query(heading.where(level: 1)).filter(c => c.location().page() == page-num)\n");
+    s.push_str("    if chapter-here.len() > 0 { return [] }\n");
+    s.push_str("    let chapters-before = query(heading.where(level: 1).before(here()))\n");
+    s.push_str("    if chapters-before.len() == 0 { return [] }\n");
+    s.push_str("    let chapter-title = chapters-before.last().body\n");
+    s.push_str("    if calc.even(page-num) {\n");
+    let _ = writeln!(
+        s,
+        "      align(left, text(size: 0.85em, tracking: 0.1em, smallcaps(\"{}\")))",
+        escape_str(&meta.title)
+    );
+    s.push_str("    } else {\n");
+    s.push_str("      align(right, text(size: 0.85em, tracking: 0.1em, smallcaps(chapter-title)))\n");
+    s.push_str("    }\n");
+    s.push_str("  },\n");
+    // Footer: centered page number, suppressed on chapter-opening pages.
+    s.push_str("  footer: context {\n");
+    s.push_str("    let page-num = counter(page).get().first()\n");
+    s.push_str("    let chapter-here = query(heading.where(level: 1)).filter(c => c.location().page() == page-num)\n");
+    s.push_str("    if chapter-here.len() > 0 { return [] }\n");
+    s.push_str("    align(center, text(size: 0.85em, numbering(\"1\", page-num)))\n");
+    s.push_str("  },\n");
+    s.push_str(")\n");
+    s.push_str("#counter(page).update(1)\n");
 }
 
 fn write_preamble(s: &mut String, book: &Book) {
@@ -52,10 +95,17 @@ fn write_preamble(s: &mut String, book: &Book) {
     s.push_str(
         "#let scene-break = {\n  v(0.7em)\n  align(center, text(tracking: 0.5em, \"* * *\"))\n  v(0.7em)\n}\n",
     );
-    // Chapter heading: each level-1 heading starts a new recto, with
-    // centered small-caps display and breathing room.
+    // Raised cap: the first character of each chapter's first paragraph
+    // is set larger and slightly tracked, in the Penguin Classics style.
+    // Typst lacks native text-wrap so a true floating drop cap isn't
+    // available; this stays within the first line for a clean result.
+    s.push_str(
+        "#let raise-cap(letter) = text(size: 2.2em, weight: \"regular\", tracking: 0.05em, letter)\n",
+    );
+    // Chapter heading: each level-1 heading starts a new recto (odd page),
+    // with centered small-caps display and breathing room.
     s.push_str("#show heading.where(level: 1): it => {\n");
-    s.push_str("  pagebreak(weak: true)\n");
+    s.push_str("  pagebreak(weak: true, to: \"odd\")\n");
     s.push_str("  v(1.5in)\n");
     s.push_str("  align(center, text(size: 1.6em, tracking: 0.1em, weight: \"regular\", smallcaps(it.body)))\n");
     s.push_str("  v(2em)\n");
@@ -120,8 +170,56 @@ fn write_chapters(s: &mut String, chapters: &[Chapter]) {
         s.push('\n');
         // The level-1 heading triggers the show rule (new page + display).
         let _ = writeln!(s, "= {}", escape_str(&ch.title));
-        write_blocks(s, &ch.blocks, true);
+        write_chapter_body(s, &ch.blocks);
     }
+}
+
+/// Render a chapter's blocks, applying a raised cap to the first
+/// character of the first paragraph (when that first block is a
+/// paragraph beginning with a letter).
+fn write_chapter_body(s: &mut String, blocks: &[Block]) {
+    let mut applied_cap = false;
+    for block in blocks {
+        s.push('\n');
+        if !applied_cap {
+            applied_cap = true;
+            if let Block::Paragraph(inlines) = block {
+                if write_paragraph_with_cap(s, inlines) {
+                    continue;
+                }
+            }
+        }
+        write_block(s, block);
+    }
+}
+
+/// If `inlines` starts with a `Text` whose first char is alphabetic,
+/// emit the paragraph with that character wrapped in `#raise-cap(...)`
+/// and return true. Otherwise emit nothing and return false.
+fn write_paragraph_with_cap(s: &mut String, inlines: &[Inline]) -> bool {
+    let Some(Inline::Text(text)) = inlines.first() else {
+        return false;
+    };
+    let Some(first_char) = text.chars().next() else {
+        return false;
+    };
+    if !first_char.is_alphabetic() {
+        return false;
+    }
+    let rest = &text[first_char.len_utf8()..];
+    let _ = write!(
+        s,
+        "#raise-cap(\"{}\")",
+        escape_str(&first_char.to_string())
+    );
+    if !rest.is_empty() {
+        let _ = write!(s, "#text(\"{}\")", escape_str(rest));
+    }
+    for inline in &inlines[1..] {
+        write_inline(s, inline);
+    }
+    s.push('\n');
+    true
 }
 
 fn write_matter_pages(s: &mut String, pages: &[MatterPage]) {
@@ -318,9 +416,14 @@ mod tests {
     #[test]
     fn user_text_is_safely_quoted() {
         let mut book = small_book();
-        book.chapters[0].blocks = vec![Block::Paragraph(vec![Inline::Text(
-            r#"He said "hi" \ and # also"#.into(),
-        )])];
+        // Two paragraphs: the first has a raised cap applied to "H",
+        // the second is rendered as a single escaped `#text(...)`.
+        book.chapters[0].blocks = vec![
+            Block::Paragraph(vec![Inline::Text("First paragraph.".into())]),
+            Block::Paragraph(vec![Inline::Text(
+                r#"He said "hi" \ and # also"#.into(),
+            )]),
+        ];
         let src = build(&book);
         assert!(src.contains(r#"#text("He said \"hi\" \\ and # also")"#));
     }
@@ -358,6 +461,43 @@ mod tests {
         let src = build(&book);
         assert!(src.contains(r#"style: "italic""#));
         assert!(src.contains("A Subtitle"));
+    }
+
+    #[test]
+    fn first_chapter_paragraph_gets_raised_cap() {
+        let mut book = small_book();
+        book.chapters[0].blocks = vec![
+            Block::Paragraph(vec![Inline::Text("It was a dark night.".into())]),
+            Block::Paragraph(vec![Inline::Text("Second paragraph.".into())]),
+        ];
+        let src = build(&book);
+        // First char "I" wrapped in raise-cap, rest of first paragraph text follows.
+        assert!(src.contains(r#"#raise-cap("I")"#));
+        assert!(src.contains(r#"#text("t was a dark night.")"#));
+        // Second paragraph: no raise-cap applied.
+        assert!(src.contains(r#"#text("Second paragraph.")"#));
+    }
+
+    #[test]
+    fn raised_cap_skipped_when_first_char_not_alphabetic() {
+        let mut book = small_book();
+        book.chapters[0].blocks = vec![Block::Paragraph(vec![Inline::Text(
+            "1999 was a strange year.".into(),
+        )])];
+        let src = build(&book);
+        assert!(!src.contains("#raise-cap"));
+        assert!(src.contains(r#"#text("1999 was a strange year.")"#));
+    }
+
+    #[test]
+    fn raised_cap_skipped_when_first_inline_is_emphasis() {
+        let mut book = small_book();
+        book.chapters[0].blocks = vec![Block::Paragraph(vec![
+            Inline::Emphasis(vec![Inline::Text("Italic".into())]),
+            Inline::Text(" start.".into()),
+        ])];
+        let src = build(&book);
+        assert!(!src.contains("#raise-cap"));
     }
 
     #[test]
