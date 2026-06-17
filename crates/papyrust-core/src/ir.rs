@@ -13,9 +13,18 @@ use crate::config::TrimSize;
 #[derive(Debug, Clone)]
 pub struct Book {
     pub meta: BookMeta,
+    pub cover: Option<Cover>,
     pub front_matter: Vec<MatterPage>,
     pub chapters: Vec<Chapter>,
     pub back_matter: Vec<MatterPage>,
+}
+
+/// Cover image loaded into memory at project assembly time. Renderers
+/// embed `bytes` directly; they do not touch the filesystem for it.
+#[derive(Debug, Clone)]
+pub struct Cover {
+    pub bytes: Vec<u8>,
+    pub mime: &'static str,
 }
 
 #[derive(Debug, Clone)]

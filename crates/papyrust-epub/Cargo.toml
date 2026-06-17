@@ -11,6 +11,9 @@ rust-version.workspace = true
 [dependencies]
 papyrust-core = { workspace = true }
 thiserror = { workspace = true }
+zip = { workspace = true }
+uuid = { workspace = true }
+time = { workspace = true }
 
 [lints]
 workspace = true

@@ -5,9 +5,9 @@ Build publication-quality EPUB and print-ready PDF from a folder of Markdown.
 A CLI tool for writers who want to own their toolchain. Opinionated
 trade-press typography, single static binary, no runtime dependencies.
 
-> **Status:** under active development. M1 (project scaffolding +
-> validation) is complete. EPUB rendering (M2) and print PDF (M3) are next.
-> See [`PLAN.md`](./PLAN.md) for the roadmap.
+> **Status:** under active development. M1 (project scaffolding,
+> validation) and M2 (EPUB rendering) are complete. Print PDF (M3) is
+> next. See [`PLAN.md`](./PLAN.md) for the roadmap.
 
 ## Install (from source)
 
@@ -27,7 +27,7 @@ cd my-novel
 # add your cover image as cover.jpg
 # edit book.toml, replace the sample chapter
 papyrust validate
-papyrust build epub      # planned for M2
+papyrust build epub      # outputs build/<slug>.epub
 papyrust build pdf       # planned for M3
 ```
 

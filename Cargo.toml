@@ -40,6 +40,11 @@ serde = { version = "1", features = ["derive"] }
 toml = "0.8"
 pulldown-cmark = "0.13"
 
+# Archive + identifiers (EPUB)
+zip = { version = "2", default-features = false, features = ["deflate"] }
+uuid = { version = "1", features = ["v5"] }
+time = { version = "0.3", features = ["formatting", "macros"] }
+
 # Workspace crates
 papyrust-core = { path = "crates/papyrust-core", version = "0.1.0" }
 papyrust-epub = { path = "crates/papyrust-epub", version = "0.1.0" }

@@ -11,7 +11,7 @@
 use std::path::{Path, PathBuf};
 
 use crate::config;
-use crate::ir::{Book, BookMeta, Chapter, MatterPage};
+use crate::ir::{Book, BookMeta, Chapter, Cover, MatterPage};
 use crate::parse;
 use crate::project::ProjectLayout;
 
@@ -79,12 +79,7 @@ pub fn load_project(root: &Path) -> (Option<Book>, Report) {
         }
     };
 
-    if layout.cover.is_none() {
-        report.push(
-            Severity::Warning,
-            "cover.jpg not found at project root (required for EPUB build)",
-        );
-    }
+    let cover = read_cover(layout.cover.as_deref(), &mut report);
 
     if layout.chapters.is_empty() {
         report.push(Severity::Error, "no chapters found in chapters/");
@@ -100,11 +95,35 @@ pub fn load_project(root: &Path) -> (Option<Book>, Report) {
 
     let book = Book {
         meta: BookMeta::from(&cfg),
+        cover,
         front_matter,
         chapters,
         back_matter,
     };
     (Some(book), report)
+}
+
+fn read_cover(path: Option<&Path>, report: &mut Report) -> Option<Cover> {
+    let Some(path) = path else {
+        report.push(
+            Severity::Warning,
+            "cover.jpg not found at project root (required for EPUB build)",
+        );
+        return None;
+    };
+    match std::fs::read(path) {
+        Ok(bytes) => Some(Cover {
+            bytes,
+            mime: "image/jpeg",
+        }),
+        Err(e) => {
+            report.push(
+                Severity::Warning,
+                format!("could not read cover image {}: {e}", path.display()),
+            );
+            None
+        }
+    }
 }
 
 fn read_chapters(paths: &[PathBuf], report: &mut Report) -> Vec<Chapter> {

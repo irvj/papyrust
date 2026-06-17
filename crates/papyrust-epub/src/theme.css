@@ -1,0 +1,131 @@
+@charset "UTF-8";
+
+/* ─── body defaults ──────────────────────────────────────────────── */
+body {
+  font-family: "EB Garamond", Garamond, Georgia, serif;
+  font-size: 1em;
+  line-height: 1.45;
+  margin: 0;
+  padding: 0 1em;
+  hyphens: auto;
+  text-align: justify;
+}
+
+p {
+  margin: 0;
+  text-indent: 1.5em;
+  orphans: 2;
+  widows: 2;
+}
+
+/* No indent on the first paragraph after a heading or scene break. */
+h1 + p, h2 + p, h3 + p, h4 + p, .scene-break + p, .first-paragraph {
+  text-indent: 0;
+}
+
+h1, h2, h3, h4 {
+  font-weight: normal;
+  text-align: center;
+  font-variant: small-caps;
+  letter-spacing: 0.05em;
+  margin: 2em 0 1.5em 0;
+}
+
+h1 { font-size: 1.6em; }
+h2 { font-size: 1.3em; }
+h3 { font-size: 1.1em; }
+h4 { font-size: 1em;   }
+
+/* ─── chapter drop cap ──────────────────────────────────────────── */
+.first-paragraph::first-letter {
+  float: left;
+  font-size: 3.2em;
+  line-height: 0.85;
+  padding-right: 0.08em;
+  padding-top: 0.05em;
+  font-weight: bold;
+}
+
+/* ─── scene break ornament ─────────────────────────────────────── */
+.scene-break {
+  text-align: center;
+  margin: 1.5em 0;
+  font-size: 1.2em;
+}
+
+/* ─── blockquote ───────────────────────────────────────────────── */
+blockquote {
+  margin: 1em 2em;
+  font-style: italic;
+}
+
+blockquote p {
+  text-indent: 0;
+}
+
+/* ─── lists ────────────────────────────────────────────────────── */
+ul, ol {
+  margin: 1em 0;
+  padding-left: 2em;
+}
+
+li {
+  margin-bottom: 0.5em;
+}
+
+li > p {
+  text-indent: 0;
+  margin: 0;
+}
+
+/* ─── title page ───────────────────────────────────────────────── */
+.title-page {
+  text-align: center;
+  margin-top: 6em;
+}
+
+.title-page .book-title {
+  font-size: 2.5em;
+  font-variant: normal;
+  letter-spacing: 0.02em;
+  margin-bottom: 0.5em;
+}
+
+.title-page .book-subtitle {
+  font-style: italic;
+  font-size: 1.2em;
+  text-indent: 0;
+  margin-bottom: 3em;
+}
+
+.title-page .book-author {
+  font-size: 1.2em;
+  text-indent: 0;
+  font-variant: small-caps;
+  letter-spacing: 0.08em;
+}
+
+/* ─── copyright page ───────────────────────────────────────────── */
+.copyright {
+  text-align: center;
+  font-size: 0.85em;
+  margin-top: 4em;
+}
+
+.copyright p {
+  text-indent: 0;
+  margin-bottom: 0.6em;
+}
+
+/* ─── cover page ───────────────────────────────────────────────── */
+.cover {
+  text-align: center;
+  margin: 0;
+  padding: 0;
+}
+
+.cover img {
+  max-width: 100%;
+  max-height: 100vh;
+  height: auto;
+}
