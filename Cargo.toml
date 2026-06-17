@@ -12,7 +12,15 @@ keywords = ["epub", "pdf", "markdown", "publishing", "typst"]
 categories = ["command-line-utilities", "text-processing"]
 rust-version = "1.85"
 # Files kept in-repo but excluded from the published tarball.
-exclude = ["CLAUDE.md", "PLAN.md"]
+# Repo-specific tooling (CI, gitignore) and the dev toolchain pin add no
+# value to crate consumers; MSRV is enforced via `rust-version` above.
+exclude = [
+    "CLAUDE.md",
+    "PLAN.md",
+    ".gitignore",
+    ".github",
+    "rust-toolchain.toml",
+]
 
 [[bin]]
 name = "papyrust"
