@@ -50,7 +50,9 @@ h4 { font-size: 1em;   }
 .scene-break {
   text-align: center;
   margin: 1.5em 0;
-  font-size: 1.2em;
+  font-size: 1.1em;
+  letter-spacing: 0.6em;
+  text-indent: 0.6em; /* compensates for trailing letter-spacing */
 }
 
 /* ─── blockquote ───────────────────────────────────────────────── */

@@ -47,8 +47,11 @@ fn write_preamble(s: &mut String, book: &Book) {
     s.push_str(
         "#set par(leading: 0.65em, justify: true, first-line-indent: (amount: 1.5em, all: false))\n",
     );
-    // Scene break helper
-    s.push_str("#let scene-break = align(center, [#v(0.7em) \u{2726} #v(0.7em)])\n");
+    // Scene break helper: three asterisks with generous tracking is
+    // the trade-press fiction convention and works in any font.
+    s.push_str(
+        "#let scene-break = {\n  v(0.7em)\n  align(center, text(tracking: 0.5em, \"* * *\"))\n  v(0.7em)\n}\n",
+    );
     // Chapter heading: each level-1 heading starts a new recto, with
     // centered small-caps display and breathing room.
     s.push_str("#show heading.where(level: 1): it => {\n");

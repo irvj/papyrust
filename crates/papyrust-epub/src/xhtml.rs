@@ -8,8 +8,10 @@ use papyrust_core::ir::{Block, HeadingLevel, Inline, ListItem};
 
 use crate::escape;
 
-/// Centered ornament rendered for `Block::SceneBreak`.
-const SCENE_ORNAMENT: char = '\u{2726}'; // ✦ Black Four Pointed Star
+/// Centered ornament rendered for `Block::SceneBreak`. Three asterisks
+/// is the trade-press fiction convention and renders reliably in any
+/// font (no dependency on dingbat coverage).
+const SCENE_ORNAMENT: &str = "* * *";
 
 /// Render a sequence of blocks to XHTML.
 ///
@@ -58,7 +60,7 @@ fn render_block(out: &mut String, block: &Block, first_paragraph: bool) {
         }
         Block::SceneBreak => {
             out.push_str("<div class=\"scene-break\" role=\"separator\">");
-            out.push(SCENE_ORNAMENT);
+            out.push_str(SCENE_ORNAMENT);
             out.push_str("</div>\n");
         }
         Block::BlockQuote(inner) => {
@@ -171,7 +173,7 @@ mod tests {
     fn scene_break_renders_ornament_div() {
         let html = render_blocks(&[Block::SceneBreak], false);
         assert!(html.contains("scene-break"));
-        assert!(html.contains('\u{2726}'));
+        assert!(html.contains("* * *"));
     }
 
     #[test]
