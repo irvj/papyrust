@@ -5,22 +5,25 @@ Build publication-quality EPUB and print-ready PDF from a folder of Markdown.
 A CLI tool for writers who want to own their toolchain. Opinionated
 trade-press typography, single static binary, no runtime dependencies.
 
-> **Status:** under active development. Current version **0.1.1**
-> (see [`CHANGELOG.md`](./CHANGELOG.md)). The end-to-end pipeline
-> works (`init` → `validate` → `build epub|pdf|all`) and produces
-> shippable EPUB 3 and print-ready PDF. Release distribution (M4) is
-> paused pending real-manuscript testing. See [`PLAN.md`](./PLAN.md)
-> for the roadmap and current state.
+Pre-1.0: expect minor adjustments to output formatting between minor
+versions. See [`CHANGELOG.md`](./CHANGELOG.md) for what shipped in each
+release.
 
-## Install (from source)
+## Install
+
+```sh
+cargo install papyrust-cli
+```
+
+The crate is `papyrust-cli`; the installed binary is `papyrust`.
+
+Or from source:
 
 ```sh
 git clone https://github.com/irvj/papyrust
 cd papyrust
 cargo install --path .
 ```
-
-Once published, `cargo install papyrust-cli` will be the standard install path.
 
 ## Quick start
 

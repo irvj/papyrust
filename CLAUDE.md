@@ -13,13 +13,15 @@ Do not name competitor or "replaced" software in any committed file (README, PLA
 - **M1 + M2 + M3 (including print-typography polish) are complete and committed on `main`.**
 - **The crate is now a single flat package** (`papyrust-cli`) at the repo root — the original four-crate workspace was flattened so we can publish one crate to crates.io.
 - The end-to-end pipeline works: `papyrust init <path>` → `papyrust validate` → `papyrust build epub|pdf|all` produces shippable EPUB 3 and print-ready PDF.
-- **M4 (releases + distribution) is in progress** — versioning policy and `v0.1.0` tag in place; crate-name decision locked (`papyrust-cli` on crates.io, binary stays `papyrust`); flat layout ready for publishing.
+- **Current version: `0.1.1`**, tagged on `main` (`v0.1.0` and `v0.1.1` are both real tags; nothing has been published to crates.io yet, so the first published version will be `0.1.1`).
+- **M4 prep complete; first `cargo publish` is the next manual step.** Done: versioning policy, both tags, flatten, full publish metadata (`keywords`/`categories`/`homepage`/`readme`), tarball exclusions for `CLAUDE.md` and `PLAN.md`, dry-run clean.
+- The README has been trimmed for the crates.io audience — no references to milestones, no link to `PLAN.md` (which is excluded from the tarball). Keep it that way; internal status belongs in this file and `PLAN.md`, not in the README.
 - 90 unit tests; CI gates are fmt + clippy `-D warnings` + tests + `epubcheck` on a sample EPUB.
 
 If asked to resume work, the most likely real tasks are:
 1. **Adjustments based on visual feedback** on the PDF or EPUB (typography tweaks, ornament changes, page layout).
 2. **Items from `PLAN.md` § "Known gaps from spec"** — e.g. true floating drop cap, widows/orphans in Typst, leading tweak.
-3. **Continuing M4 work** — actual `cargo publish`, GitHub Releases workflow, Homebrew tap.
+3. **Continuing M4 work after first publish** — GitHub Releases cross-compile workflow, Homebrew tap, OFL notice with binary releases.
 
 Confirm scope before starting any of these.
 

@@ -8,7 +8,8 @@
 - **M1, M2, M3 complete** including M3 print-typography polish.
 - **Source layout flattened to a single crate** (`papyrust-cli`) so the publish story is one tarball, one crates.io listing, one version.
 - **End-to-end pipeline works**: `papyrust init` → `papyrust validate` → `papyrust build epub|pdf|all` produces shippable EPUB 3 and print-ready PDF.
-- **M4 (release + distribution) in progress** — versioning policy and `v0.1.0` tag in place; crates.io publish next.
+- **Current version `0.1.1`**, tagged on `main`. Nothing published to crates.io yet — the first published version will be `0.1.1`.
+- **M4 prep complete; first `cargo publish` is the next manual step.** Versioning policy, both tags, flatten refactor, full publish metadata, and tarball exclusions for `CLAUDE.md` and `PLAN.md` are all in place; `cargo publish --dry-run` is clean.
 - 90 unit tests; CI runs fmt + clippy (`-D warnings`) + tests + `epubcheck` on a sample build.
 
 What works today (matches the typography spec below unless flagged "→ note"):
@@ -213,10 +214,19 @@ XHTML renderer, auto cover/title/copyright/TOC pages, `nav.xhtml`, `content.opf`
 EB Garamond bundled, `typst::World` implementation, Book IR → Typst source generator, `papyrust build pdf`, build-all wiring, chapters start on recto, page numbering (roman/arabic) with chapter-opening suppression, running heads, raised cap, three-asterisk scene break.
 
 ### M4 — Polish + distribution — **in progress**
-- Versioning policy + `v0.1.0` tag — **done**
-- Crate name decision (`papyrust-cli` on crates.io) — **done**
+
+Done:
+- Versioning policy and bump process documented — **done**
+- `v0.1.0` and `v0.1.1` tags on `main` — **done**
+- Crate name decision (`papyrust-cli` on crates.io, binary stays `papyrust`) — **done**
 - Flatten workspace into single crate — **done**
-- Crates.io publish (account + token + `cargo publish`) — next
+- Full Cargo.toml metadata (`keywords`, `categories`, `homepage`, `readme`, `description`) — **done**
+- Tarball exclusions for `CLAUDE.md` and `PLAN.md` (internal docs stay in the repo, not in the published crate) — **done**
+- README trimmed for the crates.io audience (no milestone language, no broken `PLAN.md` link in the tarball) — **done**
+- `cargo publish --dry-run` clean (38 → 36 files after exclusions, ~836 KiB compressed) — **done**
+
+Next:
+- First `cargo publish` (manual; permanent)
 - Polished error messages, colorized output
 - GitHub Actions: cross-compile for macOS (arm64/x64), Linux (x64/arm64), Windows; attach binaries to releases
 - Homebrew tap
