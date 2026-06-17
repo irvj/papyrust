@@ -65,7 +65,9 @@ These are locked. Don't re-propose alternatives unless the user opens the questi
 - v1 is opinionated only — no user-facing templating system
 - No images in chapters in v1
 - No print cover generation in v1
-- Binary name: `papyrust`; published crate name will be `papyrust`
+- Binary name: `papyrust`
+- **Crates.io name: `papyrust-cli`** (the bare `papyrust` is taken by an unrelated dormant 2022 script runner; the binary is still installed as `papyrust`)
+- Only the CLI crate is published to crates.io; `papyrust-core`, `papyrust-epub`, `papyrust-pdf` are workspace-internal and should be marked `publish = false` before first publish
 
 ## Where things live (orientation)
 

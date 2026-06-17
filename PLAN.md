@@ -203,10 +203,23 @@ EB Garamond bundled, `typst::World` implementation, Book IR → Typst source gen
 Awaiting user testing of M3 output on real manuscripts before opening this milestone. Scope when we get to it:
 - Polished error messages, colorized output
 - GitHub Actions: cross-compile for macOS (arm64/x64), Linux (x64/arm64), Windows; attach binaries to releases
-- Publish to crates.io
+- Publish to crates.io as `papyrust-cli` (see "Crates.io naming" below)
 - Homebrew tap
 - README screenshots from a sample book
 - **Ship the OFL notice with binary releases** — either bundle `OFL.txt` alongside the binary in the release tarball, or embed it via `include_str!` and expose it via a `papyrust licenses` subcommand. The source distribution already ships the file at `crates/papyrust-pdf/fonts/OFL.txt`; binary releases need their own copy so the notice stays "easily viewable by the user" per OFL §2.
+
+#### Crates.io naming (locked)
+
+The crate name `papyrust` is already taken on crates.io by an unrelated dormant project (a Rust script runner published in 2022, ~2,683 downloads, 2 GitHub stars, last activity 4+ years ago). The two domains don't overlap, so the only friction is the install command. We publish under a different name:
+
+- **Crate name on crates.io:** `papyrust-cli`
+- **Install command:** `cargo install papyrust-cli`
+- **Binary name on disk:** `papyrust` (unchanged)
+- **Repository, README, Homebrew formula, GitHub Releases:** all still `papyrust`
+
+**We do not publish the library crates** (`papyrust-core`, `papyrust-epub`, `papyrust-pdf`) — they're workspace-internal implementation. Publishing them would create an implicit library API commitment we don't want yet. Mark each with `publish = false` in its `Cargo.toml` before the first `cargo publish` of the CLI crate, so accidental publishing is blocked.
+
+When publishing `papyrust-cli`, Cargo bundles the workspace `path` dependencies into the source tarball automatically; users `cargo install papyrust-cli` and the build works without those sub-crates being on crates.io.
 
 ## Known gaps from spec (revisit during M4 or v2)
 
